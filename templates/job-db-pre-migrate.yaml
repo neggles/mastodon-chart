@@ -1,18 +1,17 @@
-{{- if .Values.mastodon.hooks.dbMigrate.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "mastodon.fullname" . }}-db-migrate
+  name: {{ include "mastodon.fullname" . }}-db-pre-migrate
   labels:
     {{- include "mastodon.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
     "helm.sh/hook-weight": "-2"
 spec:
   template:
     metadata:
-      name: {{ include "mastodon.fullname" . }}-db-migrate
+      name: {{ include "mastodon.fullname" . }}-db-pre-migrate
       {{- with .Values.jobAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
@@ -37,13 +36,13 @@ spec:
       volumes:
         - name: assets
           persistentVolumeClaim:
-            claimName: {{ template "mastodon.pvc.assets" . }}
+            claimName: {{ template "mastodon.fullname" . }}-assets
         - name: system
           persistentVolumeClaim:
-            claimName: {{ template "mastodon.pvc.system" . }}
+            claimName: {{ template "mastodon.fullname" . }}-system
       {{- end }}
       containers:
-        - name: {{ include "mastodon.fullname" . }}-db-migrate
+        - name: {{ include "mastodon.fullname" . }}-db-pre-migrate
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
@@ -67,22 +66,10 @@ spec:
                 secretKeyRef:
                   name: {{ template "mastodon.redis.secretName" . }}
                   key: redis-password
-            {{- if and .Values.redis.sidekiq.enabled .Values.redis.sidekiq.auth.existingSecret }}
-            - name: "SIDEKIQ_REDIS_PASSWORD"
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "mastodon.redis.sidekiq.secretName" . }}
-                  key: redis-password
-            {{- end }}
-            {{- if and .Values.redis.cache.enabled .Values.redis.cache.auth.existingSecret }}
-            - name: "CACHE_REDIS_PASSWORD"
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "mastodon.redis.cache.secretName" . }}
-                  key: redis-password
-            {{- end }}
             - name: "PORT"
               value: {{ .Values.mastodon.web.port | quote }}
+            - name: "SKIP_POST_DEPLOYMENT_MIGRATIONS"
+              value: "true"
           {{- if (not .Values.mastodon.s3.enabled) }}
           volumeMounts:
             - name: assets
@@ -90,4 +77,3 @@ spec:
             - name: system
               mountPath: /opt/mastodon/public/system
           {{- end }}
-{{- end -}}
