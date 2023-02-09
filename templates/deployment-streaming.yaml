@@ -101,6 +101,10 @@ spec:
             - name: "DB_HOST"
               value: {{ . }}
             {{- end }}
+            {{- with .Values.mastodon.streaming.trustedIPs }}
+            - name: TRUSTED_PROXY_IP
+              value: {{ join " " . | quote }}
+            {{- end }}
             - name: "DB_PASS"
               valueFrom:
                 secretKeyRef:

@@ -342,6 +342,8 @@ mastodon:
     # Specify extra environment variables to be added to streaming pods.
     extraEnvVars: {}
 
+    trustedIPs: []
+
   web:
     port: 3000
     # -- Number of Web Pods running
@@ -408,6 +410,8 @@ mastodon:
       exporterUri:
       namePrefix:
       nameSeparator:
+
+    trustedIPs: []
 
   # HTTP cache buster configuration.
   # See the documentation for more information about this feature:
