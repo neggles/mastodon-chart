@@ -62,6 +62,13 @@ spec:
             - secretRef:
                 name: {{ template "mastodon.secretName" . }}
           env:
+            {{- with .Values.mastodon.web.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.mastodon.web.trustedIPs }}
+            - name: TRUSTED_PROXY_IP
+              value: {{ join " " . }}
+            {{- end }}
             - name: "DB_PASS"
               valueFrom:
                 secretKeyRef:

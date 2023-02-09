@@ -46,6 +46,13 @@ spec:
             - configMapRef:
                 name: {{ include "mastodon.fullname" . }}-env
           env:
+            {{- with .Values.mastodon.streaming.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.mastodon.streaming.trustedIPs }}
+            - name: TRUSTED_PROXY_IP
+              value: {{ join " " . | quote }}
+            {{- end }}
             - name: "DB_PASS"
               valueFrom:
                 secretKeyRef:

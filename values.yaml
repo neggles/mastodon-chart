@@ -172,6 +172,8 @@ mastodon:
     # requests:
     #   cpu: 250m
     #   memory: 128Mi
+    extraEnv: []
+    trustedIPs: []
   web:
     port: 3000
     # -- Number of Web Pods running
@@ -196,6 +198,9 @@ mastodon:
     maxThreads: "5"
     workers: "2"
     persistentTimeout: "20"
+    # Extra environment variables to pass to the web container
+    extraEnv: []
+    trustedIPs: []
 
   metrics:
     statsd:
