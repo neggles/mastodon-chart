@@ -508,6 +508,7 @@ elasticsearch:
   # RAILS_ENV=production bundle exec rake chewy:sync
   # (https://docs.joinmastodon.org/admin/optional/elasticsearch/)
   enabled: true
+  deploy: true
   # @ignored
   image:
     tag: 7
@@ -529,6 +530,7 @@ postgresql:
   # -- disable if you want to use an existing db; in which case the values below
   # must match those of that external postgres instance
   enabled: true
+  deploy: true
   # postgresqlHostname: preexisting-postgresql
   # postgresqlPort: 5432
   auth:
@@ -564,6 +566,7 @@ postgresql:
 redis:
   # disable if you want to use an existing redis instance; in which case the
   # values below must match those of that external redis instance
+  deploy: true
   enabled: true
   hostname: ""
   port: 6379
