@@ -414,3 +414,4 @@ CACHE_BUSTER_ENABLED: "false"
 {{- with .Values.timezone }}
 TZ: {{ . | quote }}
 {{- end }}
+{{- end -}}
